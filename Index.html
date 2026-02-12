@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>iDesmeliguidos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{
+  --ciano:#1fd1ff;
+  --marrom:#5a3b2e;
+  --rosa:#ff4fd8;
+  --amarelo:#ffe066;
+  --verde:#00ff9c;
+}
+
+/* ================= GERAL ================= */
+*{box-sizing:border-box;font-family:Verdana}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,.05),
+      rgba(255,255,255,.05) 10px,
+      transparent 10px,
+      transparent 20px
+    ),
+    linear-gradient(135deg,var(--ciano),var(--rosa),var(--amarelo));
+  background-attachment:fixed;
+  overflow-x:hidden;
+}
+
+/* ================= INTRO ================= */
+#intro{
+  position:fixed;inset:0;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  z-index:10000;color:#fff;
+  animation:introOut 1s ease forwards;
+  animation-delay:4s;
+}
+#intro h1{
+  font-size:48px;
+  background:linear-gradient(90deg,var(--rosa),var(--ciano));
+  -webkit-background-clip:text;
+  color:transparent;
+  animation:pulse 1.5s infinite;
+}
+@keyframes introOut{to{opacity:0;pointer-events:none}}
+@keyframes pulse{50%{transform:scale(1.06)}}
+
+/* ================= LOGIN ================= */
+#login{
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle,var(--marrom),#000 70%);
+  z-index:9999;
+}
+#login .box{
+  background:#fff;
+  padding:30px;
+  border-radius:30px;
+  text-align:center;
+  box-shadow:0 0 60px var(--ciano);
+}
+
+/* ================= NAV ================= */
+nav{
+  display:flex;flex-wrap:wrap;gap:14px;padding:16px;justify-content:center;
+}
+nav button{
+  border:none;padding:14px 26px;border-radius:40px;
+  background:linear-gradient(135deg,var(--verde),var(--amarelo));
+  font-weight:bold;cursor:pointer;
+  box-shadow:0 6px 0 #0003;
+  transition:.2s;
+}
+nav button:hover{
+  transform:translateY(-4px) scale(1.05);
+}
+nav button.extras{
+  background:linear-gradient(135deg,var(--rosa),var(--ciano));
+}
+
+/* ================= SECTIONS ================= */
+section{display:none;padding:18px;animation:fade .4s ease}
+section.active{display:block}
+@keyframes fade{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:none}
+}
+
+/* ================= CARD ================= */
+.card{
+  background:#fff;
+  border-radius:40px;
+  padding:26px;
+  box-shadow:0 0 40px #0004;
+  position:relative;
+}
+
+/* ================= STICKERS ================= */
+.sticker{
+  position:absolute;
+  font-size:30px;
+  animation:float 4s ease-in-out infinite;
+}
+.s1{top:-16px;left:20px}
+.s2{top:-20px;right:30px;animation-delay:1s}
+.s3{bottom:-18px;right:40px;animation-delay:2s}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-8px)}
+}
+
+/* ================= GRID ================= */
+.grid{display:grid;gap:14px;margin-top:14px}
+.grid img,.grid video{
+  width:100%;
+  border-radius:24px;
+  box-shadow:0 0 14px #0004;
+}
+
+/* ================= CHAT ================= */
+.chatMsg{
+  background:#eee;
+  padding:8px 14px;
+  border-radius:18px;
+  margin:4px 0;
+}
+
+/* ===== AJUSTE PARA NÃO CRESCER ===== */
+#fakeComments{
+  max-height:260px;
+  overflow:auto;
+}
+
+/* ================= EXTRAS ================= */
+.extraTabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+}
+.extraTabs button{
+  background:linear-gradient(135deg,var(--ciano),var(--verde));
+  border:none;
+  border-radius:30px;
+  padding:12px 20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+#moods button{
+  font-size:28px;
+  background:none;
+  border:none;
+  cursor:pointer;
+}
+
+/* ================= SECRET ================= */
+#secret .card{
+  background:linear-gradient(135deg,#111,#333);
+  color:#fff;
+}
+canvas{
+  background:#fff;
+  border-radius:24px;
+  border:5px dashed var(--rosa);
+}
+.clearBtn{
+  background:var(--rosa);
+  font-weight:bold;
+}
+
+.delBtn{
+  background:#ff4fd8;
+  border:none;
+  border-radius:20px;
+  margin-top:4px;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- 🔊 ÁUDIOS -->
+<audio id="bgm" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/10/25/audio_946bfa2a3b.mp3">
+</audio>
+<audio id="click">
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a73467.mp3">
+</audio>
+
+<div id="intro">
+  <h1>iDesmeliguidos</h1>
+  <p>carregando memórias…</p>
+</div>
+
+<div id="login">
+  <div class="box">
+    <h2>🔒 iDesmeliguidos</h2>
+    <input id="senha" placeholder="Senha do site"><br><br>
+    <button onclick="entrar()">Entrar</button>
+  </div>
+</div>
+
+<nav>
+  <button onclick="show('home')">Home</button>
+  <button onclick="show('episodios')">Episódios</button>
+  <button onclick="show('musica')">Música</button>
+  <button onclick="show('memorias')">Memórias</button>
+  <button onclick="show('comentarios')">Comentários</button>
+  <button class="extras" onclick="show('extras')">Extras</button>
+  <button onclick="showSecret()">🔐</button>
+</nav>
+
+<section id="home" class="active">
+  <div class="card">
+    <div class="sticker s1">⭐</div>
+    <div class="sticker s2">🎮</div>
+    <div class="sticker s3">💥</div>
+    <h2>iDesmeliguidos 💖</h2>
+    <p>Amizade, caos e comentários que ninguém pediu 😭</p>
+<div id="homeMedia" class="grid"></div>
+<div id="fakeComments"></div>
+  </div>
+</section>
+
+<section id="episodios">
+  <div class="card">
+    <h2>Episódios 🎬</h2>
+    <input type="file" accept="video/*,image/*" onchange="addEp(this)">
+    <div id="eps" class="grid"></div>
+  </div>
+</section>
+
+<section id="musica">
+  <div class="card">
+    <h2>Música 🎵</h2>
+    <input type="file" accept="audio/*" onchange="addMusica(this)">
+    <div id="musicas" class="grid"></div>
+  </div>
+</section>
+
+<section id="memorias">
+  <div class="card">
+    <h2>Memórias 📸</h2>
+    <input type="file" id="memFile" accept="image/*,video/*">
+    <input id="memText" placeholder="Texto">
+    <button onclick="saveMem()">Salvar</button>
+    <div id="memList" class="grid"></div>
+  </div>
+</section>
+
+<section id="comentarios">
+  <div class="card">
+    <h2>Chat 💬</h2>
+    <input id="user" placeholder="Nome">
+    <input id="msg" placeholder="Mensagem">
+    <button onclick="sendMsg()">Enviar</button>
+    <div id="chat"></div>
+  </div>
+</section>
+
+<section id="extras">
+  <div class="card">
+    <div class="extraTabs">
+      <button onclick="extra('bv')">Brilhante Victória</button>
+      <button onclick="extra('hd')">Henry Danger</button>
+      <button onclick="extra('th')">The Thundermans</button>
+      <button onclick="extra('sc')">Sam & Cat</button>
+    </div>
+    <div id="extraContent"></div>
+  </div>
+</section>
+
+<section id="secret">
+  <div class="card">
+    <h2>Área Secreta 👁️</h2>
+    <input id="smsg" placeholder="Mensagem secreta">
+    <button onclick="sendSecret()">Enviar</button>
+    <div id="secretChat"></div>
+    <br>
+    <canvas id="draw" width="300" height="300"></canvas>
+    <button class="clearBtn" onclick="ctx.clearRect(0,0,300,300)">Limpar desenho</button>
+  </div>
+</section>
+
+<script>
+const SENHA="iDesmeliguidos123";
+const SECRETA="JPWMLNFJ";
+
+/* SOM */
+const bgm=document.getElementById("bgm");
+const click=document.getElementById("click");
+document.querySelectorAll("button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    click.currentTime=0;
+    click.play();
+  });
+});
+
+/* LOGIN */
+function entrar(){
+  if(senha.value===SENHA){
+    login.style.display="none";
+    bgm.volume=0.4;
+    bgm.play();
+  }
+}
+
+/* NAVEGAÇÃO */
+function show(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+function showSecret(){
+  if(prompt("Senha secreta:")===SECRETA) show("secret");
+}
+
+/* EPISÓDIOS + HOME SINCRONIZADO */
+function addEp(i){
+  const f=i.files[0];
+  const u=URL.createObjectURL(f);
+
+  const wrap=document.createElement("div");
+  const del=`<button class='delBtn' onclick='this.parentNode.remove()'>Apagar</button>`;
+
+  wrap.innerHTML=f.type.startsWith("video")
+    ?`<video src="${u}" controls></video>${del}`
+    :`<img src="${u}">${del}`;
+
+  eps.appendChild(wrap.cloneNode(true));
+  homeMedia.appendChild(wrap);
+
+  if(homeMedia.children.length>5){
+    homeMedia.removeChild(homeMedia.children[0]);
+  }
+}
+
+/* MÚSICA */
+function addMusica(a){
+  const f=a.files[0];
+  if(!f || !f.type.startsWith("video")) return;
+
+  const u=URL.createObjectURL(f);
+  const wrap=document.createElement("div");
+
+  const del=`<button class='delBtn' onclick='this.parentNode.remove()'>Apagar</button>`;
+  wrap.innerHTML=`<audio src='${u}' controls>${del}</audio>`;
+
+  document.getElementById("musicas").appendChild(wrap);
+}
+
+/* MEMÓRIAS */
+function saveMem(){
+  const f=memFile.files[0];
+  const t=memText.value;
+
+  const del="<button class='delBtn' onclick='this.parentNode.remove()'>Apagar</button>";
+
+  if(f){
+    const u=URL.createObjectURL(f);
+    const d=document.createElement("div");
+    d.innerHTML=f.type.startsWith("video")
+      ?`<video src="${u}" controls></video>${del}`
+      :`<img src="${u}">${del}`;
+    memList.appendChild(d);
+  }
+  if(t) memList.innerHTML+=`<p>${t}</p>`;
+  memText.value="";
+}
+
+/* CHAT */
+function sendMsg(){
+  chat.innerHTML+=`<div class="chatMsg"><b>${user.value}:</b> ${msg.value}</div>`;
+  msg.value="";
+}
+function sendSecret(){
+  secretChat.innerHTML+=`<div class="chatMsg">${smsg.value}</div>`;
+  smsg.value="";
+}
+
+/* FAKE CHAT */
+const fakeUsers=["N1njaBR","GG_Master","Cellbitado","GaulesFPS","ConsoleKing"];
+const fakeTexts=["KKKK","mentira","para","socorro","isso é fake"];
+let lastUser=null;
+setInterval(()=>{
+  const u=fakeUsers[Math.random()*fakeUsers.length|0];
+  const t=fakeTexts[Math.random()*fakeTexts.length|0];
+  const d=document.createElement("div");
+  d.className="chatMsg";
+  d.textContent=u+": "+t;
+  fakeComments.appendChild(d);
+},1200);
+
+/* EXTRAS */
+let points=0;
+function extra(x){
+  if(x==="bv"){
+    extraContent.innerHTML=`<h3>Como você tá hoje?</h3><div id="moods"></div><p id="moodResult"></p>`;
+    "😍 🤣 😐 😶‍🌫️ 🥵 🥶 🤡 🫦 💩 💀".split(" ").forEach(e=>{
+      moods.innerHTML+=`<button onclick="moodResult.textContent='Hoje você está: ${e}'">${e}</button>`;
+    });
+  }
+  if(x==="hd"){
+    points++;
+    extraContent.innerHTML=`Missão do dia: Faça alguém rir 😂<br>Pontos: ${points}`;
+  }
+  if(x==="th"){
+    const p=["Super força","Invisibilidade","Velocidade","Telepatia"];
+    extraContent.innerHTML="Poder do dia: "+p[Math.random()*p.length|0];
+  }
+  if(x==="sc"){
+    const caos=["EU GRITEI 😭","CADE O BOTÃO","BANANA CÓSMICA 🍌","SOCORRO"];
+    extraContent.innerHTML=caos[Math.random()*caos.length|0];
+  }
+}
+
+/* CANVAS */
+let ctx=draw.getContext("2d"),d=false;
+draw.onpointerdown=()=>d=true;
+draw.onpointerup=()=>d=false;
+draw.onpointermove=e=>{
+  if(d)ctx.fillRect(e.offsetX,e.offsetY,4,4);
+};
+
+/* === SOM AO CLICAR EM QUALQUER PARTE DO SITE (ADICIONADO SEM ALTERAR O RESTO) === */
+document.addEventListener("click",()=>{
+  click.currentTime=0;
+  click.play();
+});
+</script>
+
+</body>
+</html>
